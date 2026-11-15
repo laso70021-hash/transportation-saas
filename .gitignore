@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.env*
+
+!.env.example
+dist
+*.tsbuildinfo
+supabase/.temp
+.development
+.vercel
+.openai
+DEVELOPMENT_ACCOUNTS.txt
+*.log
+*.pem
+*.key

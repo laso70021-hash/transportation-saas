@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.development
+.openai
+.env*
+!.env.example
+DEVELOPMENT_ACCOUNTS.txt
+*.tsbuildinfo
+*.log
+supabase/.temp

@@ -1,0 +1,7 @@
+import {useQuery} from '@tanstack/react-query';
+import {useState} from 'react';
+import {useApi} from '../lib/api';
+import {DataForm} from '../components/Forms';
+import {ErrorState,Loading} from '../components/Empty';
+import {f} from '../lib/modules';
+export function BookingComments({booking,compose=false}:{booking:string;compose?:boolean}){const api=useApi(),[version,setVersion]=useState(0);const comments=useQuery({queryKey:['booking-comments',booking],queryFn:async()=>{const r=await api.db!.from('sl_booking_comments').select('*').eq('booking_id',booking).order('created_at');if(r.error)throw r.error;return r.data},refetchInterval:15000});return <section className="booking-detail-card"><h3>Request comments</h3>{comments.error?<ErrorState error={comments.error}/>:comments.isPending?<Loading/>:!comments.data?.length?<p>No comments yet.</p>:comments.data.map(c=><article className="booking-saved-quote" key={c.id}><strong>{c.author_id===api.session?.user.id?'You':'Request participant'}</strong><p style={{whiteSpace:'pre-wrap'}}>{c.body}</p><small>{new Date(c.created_at).toLocaleString()}</small></article>)}{compose&&<DataForm key={version} fields={[f('comment','Comment for the requester','textarea')]} description="This comment is shared with the requester and authorized colleagues." label="Send comment" submit={async values=>{await api.rpc('sl_add_booking_comment',{booking,comment:values.comment});setVersion(v=>v+1);await comments.refetch()}}/>}</section>}

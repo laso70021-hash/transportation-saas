@@ -1,0 +1,58 @@
+{
+  "name": "swahivo-logistics",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test:db": "node tests/database.mjs",
+    "test:saas": "node tests/saas-database.mjs",
+    "test:operations": "node tests/operations.mjs",
+    "test": "npm run test:db && npm run test:saas && npm run test:operations && npm run test:owner && npm run test:accounts && npm run test:pwa && npm run test:offline",
+    "dev:seed": "node scripts/seed-development.mjs",
+    "test:hosted": "node tests/hosted-e2e.mjs",
+    "test:owner": "node tests/account-owner.mjs",
+    "test:accounts": "node tests/account-management.mjs",
+    "test:pwa": "node tests/pwa.mjs",
+    "test:offline": "node tests/offline.mjs"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "7.0.6",
+    "@radix-ui/react-slot": "1.5.0",
+    "@react-pdf/renderer": "4.9.0",
+    "@supabase/supabase-js": "2.80.0",
+    "@tanstack/react-query": "5.107.1",
+    "@zxing/browser": "0.2.1",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "date-fns": "4.4.0",
+    "lucide-react": "0.468.0",
+    "maplibre-gl": "6.18.0",
+    "qrcode.react": "4.2.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-hook-form": "7.92.0",
+    "react-router-dom": "7.18.5",
+    "recharts": "3.10.1",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "fake-indexeddb": "^6.2.8",
+    "supabase": "3.1.0",
+    "tailwindcss": "4.3.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  },
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  }
+}

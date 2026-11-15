@@ -1,0 +1,88 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swahivo-logistics@1.0.0 test
+> npm run test:db && npm run test:saas && npm run test:operations
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swahivo-logistics@1.0.0 test:db
+> node tests/database.mjs
+
+PASS: schema, linked workflow, four timeline events, four notifications, transition rejection, six-table isolation, write isolation, foreign key boundary, viewer denial.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swahivo-logistics@1.0.0 test:saas
+> node tests/saas-database.mjs
+
+PASS: Cargo onboarding requires approval
+PASS: Owner cannot self-approve
+PASS: Customer books real pending shipment
+PASS: Server computes price and creates invoice
+PASS: Second customer cannot read shipment
+PASS: Second customer cannot read invoice
+PASS: Company B cannot read Company A shipment
+PASS: Customer cannot verify own payment
+PASS: Verified payment updates invoice atomically
+PASS: Customer receives four real timeline events
+PASS: Review requires moderation
+PASS: Cross-company relationship rejected
+PASS: Viewer cannot create driver
+PASS: Viewer cannot request operational pickups through RPC
+PASS: Viewer cannot submit company payments through RPC
+PASS: Assigned plan enforces shipment quota
+PASS: Expired subscription blocks new booking
+PASS: Customer cannot forge tracking history
+PASS: Linked customer deletion is protected
+PASS: Users cannot promote themselves to platform admin
+PASS: Authenticated platform support request is stored
+PASS: Support inbox isolates user messages
+PASS: Suspension blocks tenant staff operations
+PASS: Customers retain their historical shipment
+PASS: Dashboard respects customer RLS
+PASS: Anonymous operational access denied
+26 SaaS database checks passed (local PGlite; hosted project not connected).
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> swahivo-logistics@1.0.0 test:operations
+> node tests/operations.mjs
+
+PASS Provider verification activates company with reviewer evidence
+PASS Customer booking privacy
+PASS Eligible providers require actual coverage and verification
+PASS Ineligible provider assignment rejected
+PASS Shipment creation is idempotent
+PASS Manual TZS fee edit records calculation history
+PASS Assigned driver receives real pickup
+PASS Driver assignment notification exists
+PASS Collection without QR scan rejected
+PASS Invalid QR token rejected
+PASS Delivery without proof rejected
+PASS Nonexistent proof files rejected
+PASS Delivered filtering includes completed shipment
+PASS Delivery task filter includes delivered shipment
+PASS Unauthorized status changes rejected
+PASS Customer cannot verify payment
+PASS Duplicate payment verification rejected
+PASS Commission and provider ledger snapshot verified
+PASS Payout overdraw rejected
+PASS Duplicate payout confirmation rejected
+PASS Finalized shipping fee protected
+PASS Receiving posts real inventory movement
+PASS Customer sees their own stored goods
+PASS Other customer inventory denied
+PASS Cross-organization inventory denied
+PASS Cross-organization warehouse write denied
+PASS Warehouse staff cannot read payout destinations
+PASS Warehouse staff cannot read financial ledger
+PASS Invalid task type denied
+PASS Cross-company verification document path denied
+PASS Non-finite capacity rejected by database
+PASS Driver and vehicle concurrent assignment rejected
+PASS Direct vehicle assignment bypass rejected
+PASS Picking reserves stock without subtracting quantity
+PASS Release requires actual recorded dispatch scan
+PASS Release deducts stock through immutable movement
+PASS Development seed refuses absent explicit development guard
+PASS Development SQL persists two isolated company fixtures
+PASS Development SQL rerun preserves records
+39 operations database assertions passed. Local Postgres-compatible execution only; Auth, actual Storage bytes, camera, GPS and Realtime integration not claimed.

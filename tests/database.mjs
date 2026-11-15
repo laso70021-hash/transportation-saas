@@ -1,0 +1,24 @@
+process.on('uncaughtException',e=>{console.error(e.message,e.position,e.where);process.exit(1)});
+import {PGlite} from '@electric-sql/pglite';
+import fs from 'node:fs';
+const db=new PGlite();
+await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$; grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;`);
+await db.exec(fs.readFileSync(new URL('../public/setup.sql',import.meta.url),'utf8'));
+const a='00000000-0000-0000-0000-000000000001', b='00000000-0000-0000-0000-000000000002';
+await db.exec(`insert into auth.users values ('${a}'),('${b}');set role authenticated;set request.jwt.claim.sub='${a}';`);
+const w=(await db.query(`select public.sl_create_workspace('A') as id`)).rows[0].id;
+const c=(await db.query(`insert into public.sl_clients(workspace_id,name,email) values('${w}','Test','test@example.invalid') returning id`)).rows[0].id;
+const o=(await db.query(`insert into public.sl_orders(workspace_id,client_id,reference) values('${w}','${c}','TEST') returning id`)).rows[0].id;
+const s=(await db.query(`insert into public.sl_shipments(workspace_id,order_id,origin,destination) values('${w}','${o}','Dar','Zanzibar') returning id`)).rows[0].id;
+for(const status of ['Processing','In Transit','Delivered'])await db.query(`update public.sl_shipments set status=$1 where id=$2`,[status,s]);
+const events=await db.query('select status from public.sl_tracking_events order by created_at');
+if(events.rows.map(r=>r.status).join(',')!=='Pending,Processing,In Transit,Delivered')throw Error('Timeline mismatch');
+const count=await db.query('select count(*)::int n from public.sl_notifications');if(count.rows[0].n!==4)throw Error('Notifications mismatch');
+let denied=false;try{await db.query(`update public.sl_shipments set status='Pending' where id=$1`,[s])}catch{denied=true}if(!denied)throw Error('Transition not enforced');
+await db.exec(`set request.jwt.claim.sub='${b}'`);const wb=(await db.query(`select public.sl_create_workspace('B') as id`)).rows[0].id;
+for(const t of ['clients','orders','shipments','tracking_events','audit','notifications']){const r=await db.query(`select * from public.sl_${t} where workspace_id=$1`,[w]);if(r.rows.length)throw Error('Isolation failed '+t)}
+const update=await db.query(`update public.sl_clients set name='HACK' where id=$1 returning id`,[c]);if(update.rows.length)throw Error('Cross update accepted');
+denied=false;try{await db.query(`insert into public.sl_orders(workspace_id,client_id,reference) values($1,$2,'BAD')`,[wb,c])}catch{denied=true}if(!denied)throw Error('Cross link accepted');
+await db.exec('reset role');await db.query(`update public.sl_memberships set role='viewer' where workspace_id=$1 and user_id=$2`,[wb,b]);await db.exec('set role authenticated');denied=false;try{await db.query(`insert into public.sl_clients(workspace_id,name,email) values($1,'DENIED','denied@example.invalid')`,[wb])}catch{denied=true}if(!denied)throw Error('Viewer wrote data');
+console.log('PASS: schema, linked workflow, four timeline events, four notifications, transition rejection, six-table isolation, write isolation, foreign key boundary, viewer denial.');
+await db.close();

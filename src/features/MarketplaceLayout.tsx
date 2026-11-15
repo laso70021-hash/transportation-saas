@@ -1,0 +1,5 @@
+import {Link,NavLink,Outlet} from 'react-router-dom';
+import {useApi} from '../lib/api';
+import {ThemeToggle} from '../components/Theme';
+import {InstallApp} from '../components/Pwa';
+export function MarketplaceLayout(){const api=useApi();return <div className="market-public"><header className="market-public-header"><Link className="ops-brand swahivo-wordmark" to="/" aria-label="Swahivo home">Swahivo</Link><nav><NavLink to="/">Home</NavLink><NavLink to="/discover">Services</NavLink><NavLink to="/find-providers">Find providers</NavLink><NavLink to="/vehicle-hire">Vehicle hire</NavLink><NavLink to="/tracking">Track shipment</NavLink></nav><div className="button-row"><InstallApp/><ThemeToggle/>{api.session?<Link className="ui-button primary" to="/access">My dashboard</Link>:<><Link className="ui-button outline" to="/login">Sign in</Link><Link className="ui-button primary" to="/register">Create account</Link></>}</div></header><main className="market-public-content"><Outlet/></main><footer className="ops-footer">Swahivo Logistics · <Link to="/privacy">Privacy</Link> · <Link to="/terms">Terms</Link></footer></div>}
